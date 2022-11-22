@@ -16,11 +16,13 @@ const lightbox = new SimpleLightbox('.gallery a', {
 });
 
 let apiService;
+let page;
 refs.searchForm.addEventListener('submit', onSearch);
 
 function onSearch(e) {
   e.preventDefault();
   apiService = e.target.elements.searchQuery.value;
+  console.log(apiService);
   page = 1;
   API.getData(apiService, page).then(response => {
     if (
