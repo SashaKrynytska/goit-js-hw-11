@@ -15,6 +15,7 @@ const lightbox = new SimpleLightbox('.gallery a', {
   captionDelay: 250,
 });
 
+let apiService;
 refs.searchForm.addEventListener('submit', onSearch);
 
 function onSearch(e) {
