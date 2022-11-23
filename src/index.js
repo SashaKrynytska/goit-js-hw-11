@@ -7,6 +7,7 @@ import { createMarkup } from './js/markup';
 const refs = {
   searchForm: document.querySelector('#search-form'),
   imagesContainer: document.querySelector('.gallery'),
+  btn: document.querySelector('.btn'),
 };
 
 const lightbox = new SimpleLightbox('.gallery a', {
@@ -17,6 +18,7 @@ const lightbox = new SimpleLightbox('.gallery a', {
 
 let apiService;
 let page;
+let totalGallery;
 refs.searchForm.addEventListener('submit', onSearch);
 
 function onSearch(e) {
@@ -37,7 +39,13 @@ function onSearch(e) {
       Notiflix.Notify.success(
         `Hooray! We found ${response.data.totalHits} images.`
       );
+      console.log(response.data.totalHits);
       createMarkup(response.data.hits, refs.imagesContainer);
+      totalGallery = response.data.totalHits;
+      console.log(totalGallery);
+      totalGallery >= response.data.totalHits
+        ? noActiveSearchBtn()
+        : ActiveSearchBtn();
       const { height: cardHeight } = document
         .querySelector('.gallery')
         .firstElementChild.getBoundingClientRect();
@@ -49,6 +57,16 @@ function onSearch(e) {
       loadingObserver.observe(refs.imagesContainer.lastElementChild);
     }
   });
+}
+
+function noActiveSearchBtn() {
+  refs.btn.style.display = 'none';
+  refs.btn.style.visibility = 'hidden';
+}
+
+function ActiveSearchBtn() {
+  refs.btn.style.display = 'block';
+  refs.btn.style.visibility = 'visible';
 }
 
 // Infinite Scroll
