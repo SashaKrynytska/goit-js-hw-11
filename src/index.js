@@ -16,36 +16,36 @@ const lightbox = new SimpleLightbox('.gallery a', {
   captionDelay: 250,
 });
 
-let apiService;
+// let apiService = null;
 let page;
 let totalGallery;
 refs.searchForm.addEventListener('submit', onSearch);
+refs.imagesContainer.addEventListener('click', e => {
+  e.preventDefault();
+});
+refs.btn.style.visibility = 'visible';
 
 function onSearch(e) {
   e.preventDefault();
-  apiService = e.target.elements.searchQuery.value;
-  console.log(apiService);
-  page = 1;
+  const apiService = e.target.elements.searchQuery.value;
+  refs.imagesContainer.innerHTML = '';
   API.getData(apiService, page).then(response => {
+    page = 1;
     if (
       response.data.hits.length === 0 ||
       !apiService ||
       apiService.charAt(0) === ' '
     ) {
-      return Notiflix.Notify.failure(
+      Notiflix.Notify.failure(
         'Sorry, there are no images matching your search query. Please try again.'
       );
+      return;
     } else {
       Notiflix.Notify.success(
         `Hooray! We found ${response.data.totalHits} images.`
       );
-      console.log(response.data.totalHits);
+      refs.btn.style.visibility = 'hidden';
       createMarkup(response.data.hits, refs.imagesContainer);
-      totalGallery = response.data.totalHits;
-      console.log(totalGallery);
-      totalGallery >= response.data.totalHits
-        ? noActiveSearchBtn()
-        : ActiveSearchBtn();
       const { height: cardHeight } = document
         .querySelector('.gallery')
         .firstElementChild.getBoundingClientRect();
@@ -59,16 +59,6 @@ function onSearch(e) {
   });
 }
 
-function noActiveSearchBtn() {
-  refs.btn.style.display = 'none';
-  refs.btn.style.visibility = 'hidden';
-}
-
-function ActiveSearchBtn() {
-  refs.btn.style.display = 'block';
-  refs.btn.style.visibility = 'visible';
-}
-
 // Infinite Scroll
 const loadingObserver = new IntersectionObserver(entries => {
   entries.forEach(entry => {
@@ -77,14 +67,14 @@ const loadingObserver = new IntersectionObserver(entries => {
       // если элемент находится в видимой части браузера
       // подгружаем новую страницу
       page += 1;
+      const apiService = refs.searchForm.elements.searchQuery.value;
       API.getData(apiService, page).then(response => {
-        if (
-          response.data.hits.length === 0 ||
-          response.data.hits.length > response.data.totalHits
-        ) {
+        if (response.data.hits.length === 0) {
+          console.log(response.data.hits.length);
           Notiflix.Notify.warning(
             "We're sorry, but you've reached the end of search results."
           );
+          refs.btn.style.visibility = 'visible';
           return;
         }
         createMarkup(response.data.hits, refs.imagesContainer);
