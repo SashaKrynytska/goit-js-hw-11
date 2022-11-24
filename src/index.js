@@ -66,6 +66,7 @@ const loadingObserver = new IntersectionObserver(entries => {
     if (entry.isIntersecting) {
       // если элемент находится в видимой части браузера
       // подгружаем новую страницу
+      console.log(entry.target);
       page += 1;
       const apiService = refs.searchForm.elements.searchQuery.value;
       API.getData(apiService, page).then(response => {
@@ -82,6 +83,7 @@ const loadingObserver = new IntersectionObserver(entries => {
         loadingObserver.observe(refs.imagesContainer.lastElementChild);
         /* указываем, что необходимо наблюдать за лоадером */
       });
+      loadingObserver.unobserve(entry.target);
     }
   });
 });
