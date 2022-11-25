@@ -16,7 +16,6 @@ const lightbox = new SimpleLightbox('.gallery a', {
   captionDelay: 250,
 });
 
-// let apiService = null;
 let page;
 let totalGallery;
 refs.searchForm.addEventListener('submit', onSearch);
@@ -29,8 +28,8 @@ function onSearch(e) {
   e.preventDefault();
   const apiService = e.target.elements.searchQuery.value;
   refs.imagesContainer.innerHTML = '';
+  page = 1;
   API.getData(apiService, page).then(response => {
-    page = 1;
     if (
       response.data.hits.length === 0 ||
       !apiService ||
